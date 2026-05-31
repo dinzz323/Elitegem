@@ -1,0 +1,1146 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Elitegem</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://cdn.jsdelivr.net/npm/font-awesome@4.7.0/css/font-awesome.min.css" rel="stylesheet">
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        utama: '#165DFF',
+                        ff: '#FF7A00',
+                        ml: '#00C2FF',
+                        abu: '#27272A',
+                        'abu-terang': '#3F3F46',
+                        'abu-gelap': '#18181B',
+                        hijau: '#00B42A',
+                        kuning: '#FF7D00',
+                        merah: '#F53F3F',
+                        latar: '#09090B',
+                        teks: '#FAFAFA',
+                        'teks-redup': '#A1A1AA',
+                    },
+                    fontFamily: {
+                        sans: ['Inter', 'sans-serif'],
+                    },
+                    fontSize: {
+                        'xs': ['0.75rem', '1rem'],
+                        'sm': ['0.875rem', '1.25rem'],
+                        'base': ['1rem', '1.5rem'],
+                        'lg': ['1.125rem', '1.75rem'],
+                        'xl': ['1.25rem', '1.75rem'],
+                    }
+                }
+            }
+        }
+    </script>
+    <style type="text/tailwindcss">
+        @layer utilities {
+            .content-auto {
+                content-visibility: auto;
+            }
+            .text-shadow {
+                text-shadow: 0 2px 4px rgba(0,0,0,0.3);
+            }
+            .badge {
+                @apply text-xs font-medium px-2 py-0.5 rounded;
+            }
+            .badge-proses {
+                @apply bg-kuning/20 text-kuning;
+            }
+            .badge-kirim {
+                @apply bg-utama/20 text-utama;
+            }
+            .badge-selesai {
+                @apply bg-hijau/20 text-hijau;
+            }
+            .tombol-pilih {
+                @apply bg-utama text-white px-3 py-1.5 rounded-lg text-sm hover:bg-utama/90 transition-all;
+            }
+            .tombol-pilih-sm {
+                @apply px-2 py-1 text-xs;
+            }
+            .tombol-hapus {
+                @apply bg-merah/20 text-merah p-1.5 rounded hover:bg-merah/30 transition-all;
+            }
+            .tombol-edit {
+                @apply bg-kuning/20 text-kuning p-1.5 rounded hover:bg-kuning/30 transition-all;
+            }
+            .modal {
+                @apply fixed top-0 left-0 w-full h-full bg-black/80 flex items-center justify-center z-50 opacity-0 invisible transition-all duration-300;
+            }
+            .modal.buka {
+                @apply opacity-100 visible;
+            }
+            .modal-konten {
+                @apply bg-abu border border-abu-terang text-teks rounded-2xl w-[90%] max-w-lg max-h-[90vh] overflow-y-auto transform scale-90 transition-all duration-300;
+            }
+            .modal.buka .modal-konten {
+                @apply scale-100;
+            }
+            .img-bukti {
+                @apply w-12 h-12 object-cover rounded cursor-pointer hover:scale-105 transition-all border border-abu-terang;
+            }
+            .img-bukti.besar {
+                @apply fixed top-1/2 left-1/2 w-[80vw] h-auto max-w-md -translate-x-1/2 -translate-y-1/2 z-[60] rounded-lg shadow-2xl border border-abu-terang;
+            }
+            .menu-samping {
+                @apply fixed top-0 -right-full w-[280px] h-full bg-abu shadow-2xl border-l border-abu-terang z-40 transition-all duration-300 ease-out text-teks;
+            }
+            .menu-samping.buka {
+                @apply right-0;
+            }
+            .lapisan {
+                @apply fixed inset-0 bg-black/70 z-30 opacity-0 invisible transition-all;
+            }
+            .lapisan.tampil {
+                @apply opacity-100 visible;
+            }
+            .tab-btn {
+                @apply px-4 py-2.5 font-medium text-teks-redup border-b-2 border-transparent hover:text-utama transition-colors text-sm;
+            }
+            .tab-btn.aktif {
+                @apply text-utama border-utama;
+            }
+            .tab-konten {
+                @apply hidden;
+            }
+            .tab-konten.aktif {
+                @apply block;
+            }
+            .input-gelap {
+                @apply bg-abu border border-abu-terang text-teks px-3.5 py-2.5 rounded-lg focus:ring-2 focus:ring-utama/20 focus:border-utama outline-none transition text-sm w-full;
+            }
+            .label-teks {
+                @apply block text-sm font-normal text-teks-redup mb-1.5;
+            }
+            .card {
+                @apply bg-abu border border-abu-terang rounded-xl p-4 shadow-sm;
+            }
+        }
+    </style>
+</head>
+<body class="font-sans bg-latar text-teks antialiased">
+
+    <!-- HALAMAN LOGIN / DAFTAR -->
+    <div id="halamanLogin" class="min-h-screen flex items-center justify-center p-4">
+        <div class="bg-abu rounded-2xl shadow-xl border border-abu-terang w-full max-w-md p-6">
+            <div class="text-center mb-6">
+                <h2 class="text-xl font-semibold text-utama"> LOGIN </h2>
+                <p class="text-teks-redup text-sm mt-1">Masuk atau daftar akun untuk melanjutkan</p>
+            </div>
+
+            <!-- Tab Menu -->
+            <div class="flex border-b border-abu-terang mb-5">
+                <button class="tab-btn aktif flex-1 text-center" data-target="masuk">Masuk</button>
+                <button class="tab-btn flex-1 text-center" data-target="daftar">Daftar</button>
+            </div>
+
+            <!-- Tab Masuk -->
+            <div id="tab-masuk" class="tab-konten aktif space-y-4">
+                <div>
+                    <label class="label-teks">Username</label>
+                    <input type="text" id="loginUser" class="input-gelap" placeholder="Masukkan username kamu">
+                </div>
+                <div>
+                    <label class="label-teks">Password</label>
+                    <input type="password" id="loginPass" class="input-gelap" placeholder="Masukkan kata sandi">
+                </div>
+                <button id="btnMasuk" class="w-full bg-utama text-white font-medium py-2.5 rounded-lg hover:bg-utama/90 transition-all active:scale-[0.98] mt-2">
+                    Masuk
+                </button>
+            </div>
+
+            <!-- Tab Daftar -->
+            <div id="tab-daftar" class="tab-konten space-y-4">
+                <div>
+                    <label class="label-teks">Nama Lengkap</label>
+                    <input type="text" id="regNama" class="input-gelap" placeholder="Contoh: Budi Santoso">
+                </div>
+                <div>
+                    <label class="label-teks">Email</label>
+                    <input type="email" id="regEmail" class="input-gelap" placeholder="email@contoh.com">
+                </div>
+                <div>
+                    <label class="label-teks">Username Baru</label>
+                    <input type="text" id="regUser" class="input-gelap" placeholder="Buat username unik">
+                </div>
+                <div>
+                    <label class="label-teks">Kata Sandi</label>
+                    <input type="password" id="regPass" class="input-gelap" placeholder="Minimal 6 karakter">
+                </div>
+                <button id="btnDaftar" class="w-full bg-hijau text-white font-medium py-2.5 rounded-lg hover:bg-hijau/90 transition-all active:scale-[0.98] mt-2">
+                    Daftar Akun Baru
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- HALAMAN UTAMA PENGGUNA -->
+    <div id="halamanUtama" class="hidden min-h-screen bg-latar pb-16">
+        <!-- Header -->
+        <header class="bg-abu border-b border-abu-terang shadow-sm sticky top-0 z-20">
+            <div class="container mx-auto px-4 py-3 flex justify-between items-center">
+                <div>
+                    <h1 class="text-base font-semibold text-utama">🎮 Elitegem</h1>
+                </div>
+                <button id="tombolMenu" class="p-2 rounded-lg hover:bg-abu-terang transition">
+                    <i class="fa fa-bars text-lg text-teks-redup"></i>
+                </button>
+            </div>
+        </header>
+
+        <!-- Menu Samping -->
+        <div class="lapisan" id="lapisan"></div>
+        <aside class="menu-samping" id="menuSamping">
+            <div class="p-4 border-b border-abu-terang flex justify-between items-center">
+                <h3 class="font-semibold text-base text-utama">Menu Navigasi</h3>
+                <button id="tutupMenu" class="text-teks-redup hover:text-teks">
+                    <i class="fa fa-times"></i>
+                </button>
+            </div>
+            <nav class="p-2">
+                <a href="#" onclick="gantiHalaman('beranda')" class="block px-4 py-2.5 rounded-lg hover:bg-abu-terang transition text-sm">
+                    <i class="fa fa-home mr-2 text-utama"></i> Beranda
+                </a>
+                <a href="#" onclick="gantiHalaman('freefire')" class="block px-4 py-2.5 rounded-lg hover:bg-abu-terang transition text-sm">
+                    <i class="fa fa-fire mr-2 text-ff"></i> Free Fire
+                </a>
+                <a href="#" onclick="gantiHalaman('mlbb')" class="block px-4 py-2.5 rounded-lg hover:bg-abu-terang transition text-sm">
+                    <i class="fa fa-diamond mr-2 text-ml"></i> Mobile Legends
+                </a>
+                <a href="#" onclick="gantiHalaman('riwayat')" class="block px-4 py-2.5 rounded-lg hover:bg-abu-terang transition text-sm">
+                    <i class="fa fa-history mr-2 text-kuning"></i> Riwayat Pesanan
+                </a>
+                <a href="#" onclick="gantiHalaman('carapesan')" class="block px-4 py-2.5 rounded-lg hover:bg-abu-terang transition text-sm">
+                    <i class="fa fa-question-circle mr-2 text-hijau"></i> Cara Pemesanan
+                </a>
+                <div class="border-t border-abu-terang my-2"></div>
+                <a href="#" onclick="keluarAkun()" class="block px-4 py-2.5 rounded-lg hover:bg-merah/20 text-merah transition text-sm">
+                    <i class="fa fa-sign-out mr-2"></i> Keluar Akun
+                </a>
+            </nav>
+        </aside>
+
+        <!-- KONTEN BERANDA -->
+        <main id="kontenBeranda" class="container mx-auto px-4 py-4">
+            <div class="card mb-5">
+                <h2 class="text-lg font-semibold text-teks mb-1">Selamat Datang! 👋</h2>
+                <p class="text-teks-redup text-sm">Layanan Top Up Game aman, murah, dan proses cepat.</p>
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div onclick="gantiHalaman('freefire')" class="card flex items-center gap-4 hover:bg-abu-terang transition-transform cursor-pointer">
+                    <div class="w-12 h-12 rounded-lg bg-ff/20 text-ff flex items-center justify-center text-xl">
+                        <i class="fa fa-fire"></i>
+                    </div>
+                    <div>
+                        <h3 class="font-semibold text-base text-teks">Free Fire</h3>
+                        <p class="text-sm text-teks-redup">klik untuk memilih</p>
+                    </div>
+                </div>
+                <div onclick="gantiHalaman('mlbb')" class="card flex items-center gap-4 hover:bg-abu-terang transition-transform cursor-pointer">
+                    <div class="w-12 h-12 rounded-lg bg-ml/20 text-ml flex items-center justify-center text-xl">
+                        <i class="fa fa-diamond"></i>
+                    </div>
+                    <div>
+                        <h3 class="font-semibold text-base text-teks">Mobile Legends</h3>
+                        <p class="text-sm text-teks-redup">klik untuk memilih</p>
+                    </div>
+                </div>
+            </div>
+        </main>
+
+        <!-- KONTEN FREE FIRE -->
+        <main id="kontenFreefire" class="hidden container mx-auto px-4 py-4">
+            <div class="card mb-5">
+                <div class="flex items-center gap-3 mb-5">
+                    <div class="w-10 h-10 rounded-lg bg-ff/20 text-ff flex items-center justify-center text-lg">
+                        <i class="fa fa-fire"></i>
+                    </div>
+                    <h2 class="text-lg font-semibold text-teks">Top Up Free Fire</h2>
+                </div>
+
+                <div class="space-y-3.5 mb-6">
+                    <div>
+                        <label class="label-teks">Nama Lengkap Pengirim</label>
+                        <input type="text" id="namaPembeliFF" class="input-gelap" placeholder="Sesuai bukti pembayaran">
+                    </div>
+                    <div>
+                        <label class="label-teks">Nama Akun (Nickname)</label>
+                        <input type="text" id="nickFF" class="input-gelap" placeholder="Nama yang terlihat di dalam game">
+                    </div>
+                    <div>
+                        <label class="label-teks">ID Akun</label>
+                        <input type="text" id="idAkunFF" class="input-gelap" placeholder="Contoh: 123456789">
+                    </div>
+                </div>
+
+                <h3 class="font-medium mb-3.5 text-teks">Pilih Jumlah Diamond:</h3>
+                <div id="daftarFF" class="grid grid-cols-2 sm:grid-cols-3 gap-3">
+                    <!-- Produk FF dimuat disini -->
+                </div>
+            </div>
+        </main>
+
+        <!-- KONTEN MOBILE LEGENDS -->
+        <main id="kontenMlbb" class="hidden container mx-auto px-4 py-4">
+            <div class="card mb-5">
+                <div class="flex items-center gap-3 mb-5">
+                    <div class="w-10 h-10 rounded-lg bg-ml/20 text-ml flex items-center justify-center text-lg">
+                        <i class="fa fa-diamond"></i>
+                    </div>
+                    <h2 class="text-lg font-semibold text-teks">Top Up Mobile Legends</h2>
+                </div>
+
+                <div class="space-y-3.5 mb-6">
+                    <div>
+                        <label class="label-teks">Nama Lengkap Pengirim</label>
+                        <input type="text" id="namaPembeliML" class="input-gelap" placeholder="Sesuai bukti pembayaran">
+                    </div>
+                    <div>
+                        <label class="label-teks">Nama Akun (Nickname)</label>
+                        <input type="text" id="nickML" class="input-gelap" placeholder="Nama yang terlihat di dalam game">
+                    </div>
+                    <div class="grid grid-cols-2 gap-3.5">
+                        <div>
+                            <label class="label-teks">ID Akun</label>
+                            <input type="text" id="idGameML" class="input-gelap" placeholder="Contoh: 12345678">
+                        </div>
+                        <div>
+                            <label class="label-teks">ID Server</label>
+                            <input type="text" id="idServerML" class="input-gelap" placeholder="Contoh: 1234">
+                        </div>
+                    </div>
+                </div>
+
+                <h3 class="font-medium mb-3.5 text-teks">Pilih Jumlah Diamond:</h3>
+                <div id="daftarML" class="grid grid-cols-2 sm:grid-cols-3 gap-3">
+                    <!-- Produk ML dimuat disini -->
+                </div>
+            </div>
+        </main>
+
+        <!-- KONTEN RIWAYAT -->
+        <main id="kontenRiwayat" class="hidden container mx-auto px-4 py-4">
+            <div class="card">
+                <h2 class="text-lg font-semibold mb-4 text-teks">Riwayat Pesanan Saya</h2>
+                <div class="overflow-x-auto rounded-lg border border-abu-terang">
+                    <table class="w-full text-sm">
+                        <thead>
+                            <tr class="bg-abu-terang/40 border-b border-abu-terang">
+                                <th class="text-left py-2.5 px-3 font-medium text-teks-redup">ID Pesanan</th>
+                                <th class="text-left py-2.5 px-3 font-medium text-teks-redup">Game</th>
+                                <th class="text-left py-2.5 px-3 font-medium text-teks-redup">Nama</th>
+                                <th class="text-left py-2.5 px-3 font-medium text-teks-redup">Produk</th>
+                                <th class="text-left py-2.5 px-3 font-medium text-teks-redup">Status</th>
+                            </tr>
+                        </thead>
+                        <tbody id="isiRiwayatUser">
+                            <tr><td colspan="5" class="text-center text-teks-redup p-5">Belum ada riwayat pesanan</td></tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </main>
+
+        <!-- KONTEN CARA PESAN -->
+        <main id="kontenCarapesan" class="hidden container mx-auto px-4 py-4">
+            <div class="card">
+                <h2 class="text-lg font-semibold mb-4 text-teks">Cara Melakukan Pemesanan</h2>
+                <ol class="list-decimal list-inside space-y-2 text-teks-redup text-sm pl-1">
+                    <li>Pilih jenis game yang ingin diisi</li>
+                    <li>Masukkan data akun dan nama pengirim dengan benar</li>
+                    <li>Pilih jumlah Diamond yang diinginkan</li>
+                    <li>Lakukan pembayaran sesuai nominal ke rekening/tujuan yang tertera</li>
+                    <li>Unggah bukti transfer pada halaman pembayaran</li>
+                    <li>Tunggu sebentar, pesanan akan diproses dan masuk otomatis</li>
+                </ol>
+            </div>
+        </main>
+    </div>
+
+    <!-- HALAMAN ADMIN -->
+    <div id="halamanAdmin" class="hidden min-h-screen bg-latar pb-10">
+        <!-- Header Admin -->
+        <header class="bg-utama text-white shadow-md sticky top-0 z-20">
+            <div class="container mx-auto px-4 py-3 flex justify-between items-center">
+                <h1 class="text-base font-semibold">👨‍💻 CONTROL ADMIN</h1>
+                <button id="keluarAdmin" class="bg-white/20 px-3 py-1.5 rounded-lg text-sm hover:bg-white/30 transition">Keluar</button>
+            </div>
+        </header>
+
+        <div class="container mx-auto px-4 py-5">
+            <!-- Statistik -->
+            <div class="grid grid-cols-2 md:grid-cols-4 gap-3.5 mb-5">
+                <div class="card text-center">
+                    <h3 class="text-teks-redup text-sm mb-1">Total Pesanan</h3>
+                    <p id="statTotal" class="text-xl font-semibold text-utama">0</p>
+                </div>
+                <div class="card text-center">
+                    <h3 class="text-teks-redup text-sm mb-1">Sedang Proses</h3>
+                    <p id="statProses" class="text-xl font-semibold text-kuning">0</p>
+                </div>
+                <div class="card text-center">
+                    <h3 class="text-teks-redup text-sm mb-1">Sedang Dikirim</h3>
+                    <p id="statKirim" class="text-xl font-semibold text-utama">0</p>
+                </div>
+                <div class="card text-center">
+                    <h3 class="text-teks-redup text-sm mb-1">Selesai</h3>
+                    <p id="statSelesai" class="text-xl font-semibold text-hijau">0</p>
+                </div>
+            </div>
+
+            <!-- TOMBOL FITUR: RESET DATA PESANAN SAJA -->
+            <div class="bg-merah/10 border border-merah/30 rounded-xl p-4 mb-5">
+                <h3 class="font-medium text-merah mb-1.5">⚠️ Reset Data Pesanan</h3>
+                <p class="text-sm text-teks-redup mb-3">Tindakan ini hanya menghapus <strong>Riwayat Pesanan & Statistik</strong>.<br>✅ Data Produk, Akun Pengguna, dan QR Pembayaran TETAP TERJAGA.</p>
+                <button id="btnResetSemua" class="bg-merah text-white px-3.5 py-2 rounded-lg hover:bg-merah/90 transition text-sm">
+                    🔄 reset sekarang               </button>
+            </div>
+
+            <!-- Menu Tab Admin -->
+            <div class="card overflow-hidden p-0">
+                <div class="flex flex-wrap border-b border-abu-terang">
+                    <button class="tab-btn aktif px-4 py-2.5 font-medium text-sm" data-target="transaksi">Data Transaksi</button>
+                    <button class="tab-btn px-4 py-2.5 font-medium text-sm" data-target="produk">Kelola Produk</button>
+                    <button class="tab-btn px-4 py-2.5 font-medium text-sm" data-target="akun">Data Akun Pengguna</button>
+                    <button class="tab-btn px-4 py-2.5 font-medium text-sm" data-target="pembayaran">QR Pembayaran</button>
+                </div>
+
+                <!-- DATA TRANSAKSI -->
+                <div id="tab-transaksi" class="tab-konten aktif p-4 overflow-x-auto">
+                    <table class="w-full text-sm">
+                        <thead>
+                            <tr class="border-b-2 border-abu-terang">
+                                <th class="text-left py-2 px-2 text-teks-redup font-medium">ID</th>
+                                <th class="text-left py-2 px-2 text-teks-redup font-medium">Game</th>
+                                <th class="text-left py-2 px-2 text-teks-redup font-medium">Data Pembeli</th>
+                                <th class="text-left py-2 px-2 text-teks-redup font-medium">Produk</th>
+                                <th class="text-left py-2 px-2 text-teks-redup font-medium">Harga</th>
+                                <th class="text-left py-2 px-2 text-teks-redup font-medium">Bukti</th>
+                                <th class="text-left py-2 px-2 text-teks-redup font-medium">Status</th>
+                                <th class="text-left py-2 px-2 text-teks-redup font-medium">Aksi</th>
+                            </tr>
+                        </thead>
+                        <tbody id="tabelTransaksi">
+                            <tr><td colspan="8" class="text-center text-teks-redup p-4">Belum ada pesanan masuk</td></tr>
+                        </tbody>
+                    </table>
+                </div>
+
+                <!-- KELOLA PRODUK -->
+                <div id="tab-produk" class="tab-konten p-4">
+                    <!-- Tambah Produk Baru -->
+                    <div class="bg-abu-terang/40 p-4 rounded-lg mb-5">
+                        <h4 class="font-medium mb-3 text-teks">Tambah Produk Baru</h4>
+                        <div class="grid grid-cols-1 sm:grid-cols-4 gap-3">
+                            <div>
+                                <label class="text-xs text-teks-redup mb-1 block">Pilih Game</label>
+                                <select id="tambahGame" class="input-gelap">
+                                    <option value="ff">Free Fire</option>
+                                    <option value="ml">Mobile Legends</option>
+                                </select>
+                            </div>
+                            <div>
+                                <label class="text-xs text-teks-redup mb-1 block">Jumlah Diamond</label>
+                                <input type="number" id="jmlDmBaru" class="input-gelap" placeholder="Contoh: 100">
+                            </div>
+                            <div>
+                                <label class="text-xs text-teks-redup mb-1 block">Harga (Rp)</label>
+                                <input type="number" id="hargaDmBaru" class="input-gelap" placeholder="Contoh: 10000">
+                            </div>
+                            <div class="self-end">
+                                <button id="simpanProduk" class="w-full bg-hijau text-white py-2 rounded-lg hover:bg-hijau/90 text-sm">Simpan Data</button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Daftar Produk FF -->
+                    <h4 class="font-medium text-ff mb-2.5">Daftar Produk Free Fire</h4>
+                    <div id="listProdukFF" class="mb-4 pl-1"></div>
+
+                    <!-- Daftar Produk ML -->
+                    <h4 class="font-medium text-ml mb-2.5">Daftar Produk Mobile Legends</h4>
+                    <div id="listProdukML" class="pl-1"></div>
+                </div>
+
+                <!-- DATA AKUN PENGGUNA -->
+                <div id="tab-akun" class="tab-konten p-4 overflow-x-auto">
+                    <table class="w-full text-sm">
+                        <thead>
+                            <tr class="border-b-2 border-abu-terang">
+                                <th class="text-left py-2 px-2 text-teks-redup font-medium">Nama Lengkap</th>
+                                <th class="text-left py-2 px-2 text-teks-redup font-medium">Email</th>
+                                <th class="text-left py-2 px-2 text-teks-redup font-medium">Username</th>
+                                <th class="text-left py-2 px-2 text-teks-redup font-medium">Kata Sandi</th>
+                                <th class="text-left py-2 px-2 text-teks-redup font-medium">Tanggal Daftar</th>
+                                <th class="text-center py-2 px-2 text-teks-redup font-medium">Aksi</th>
+                            </tr>
+                        </thead>
+                        <tbody id="tabelPengguna">
+                            <tr><td colspan="6" class="text-center text-teks-redup p-4">Belum ada akun yang mendaftar</td></tr>
+                        </tbody>
+                    </table>
+                </div>
+
+                <!-- QR PEMBAYARAN -->
+                <div id="tab-pembayaran" class="tab-konten p-4">
+                    <div class="max-w-sm mx-auto text-center">
+                        <img id="previewQrAdmin" src="https://via.placeholder.com/200" alt="QR Code Pembayaran" class="w-48 h-48 object-contain mx-auto mb-4 border border-abu-terang rounded-lg bg-white">
+                        <input type="file" id="uploadQrAdmin" accept="image/*" class="mb-3 text-sm w-full text-teks-redup">
+                        <p class="text-xs text-teks-redup mb-3">*Unggah gambar QR Code baru, lalu klik tombol simpan</p>
+                        <button id="simpanQrAdmin" class="bg-utama text-white px-4 py-2 rounded-lg hover:bg-utama/90 text-sm">Perbarui QR Code</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- MODAL LOGIN ADMIN -->
+    <div class="modal" id="loginAdmin">
+        <div class="modal-konten p-6 max-w-sm">
+            <h3 class="text-lg font-semibold mb-4 text-center">Masuk Sebagai Admin</h3>
+            <div class="space-y-3 mb-5">
+                <div>
+                    <label class="label-teks">Username</label>
+                    <input type="text" id="userAd" class="input-gelap" value="admin" readonly>
+                </div>
+                <div>
+                    <label class="label-teks">Kata Sandi</label>
+                    <input type="password" id="passAd" class="input-gelap" placeholder="Masukkan kata sandi">
+                </div>
+            </div>
+            <div class="flex gap-2">
+                <button id="masukAd" class="flex-1 bg-utama text-white py-2.5 rounded-lg hover:bg-utama/90">Masuk</button>
+                <button onclick="tutupSemuaModal()" class="flex-1 bg-abu-terang py-2.5 rounded-lg hover:bg-abu-terang/80">Batal</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- MODAL EDIT PRODUK -->
+    <div class="modal" id="modalEdit">
+        <div class="modal-konten p-6 max-w-sm">
+            <h3 class="text-lg font-semibold mb-4 text-center">Ubah Data Produk</h3>
+            <input type="hidden" id="editGame">
+            <input type="hidden" id="editIndex">
+            <div class="space-y-3 mb-5">
+                <div>
+                    <label class="label-teks">Jumlah Diamond</label>
+                    <input type="number" id="editJml" class="input-gelap">
+                </div>
+                <div>
+                    <label class="label-teks">Harga (Rp)</label>
+                    <input type="number" id="editHarga" class="input-gelap">
+                </div>
+            </div>
+            <div class="flex gap-2">
+                <button id="simpanEdit" class="flex-1 bg-hijau text-white py-2.5 rounded-lg hover:bg-hijau/90">Simpan Perubahan</button>
+                <button id="batalEdit" class="flex-1 bg-abu-terang py-2.5 rounded-lg hover:bg-abu-terang/80">Batal</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- MODAL PEMBAYARAN -->
+    <div class="modal" id="modalBayar">
+        <div class="modal-konten p-6 max-w-sm text-center">
+            <h3 class="text-lg font-semibold mb-2">Lakukan Pembayaran</h3>
+            <p class="text-teks-redup mb-4">Total Bayar: <span id="nominalBayar" class="font-semibold text-hijau text-lg block mt-1"></span></p>
+            <img id="gambarQrBayar" src="" alt="QR Pembayaran" class="w-48 h-48 object-contain mx-auto mb-4 border border-abu-terang rounded-lg bg-white">
+            <div class="mb-4 text-left">
+                <label class="label-teks">Unggah Bukti Transfer</label>
+                <input type="file" id="buktiTf" accept="image/*" class="w-full text-sm text-teks-redup">
+                <p class="text-xs text-teks-redup mt-1">*Wajib diisi agar pesanan segera diproses</p>
+            </div>
+            <div class="flex gap-2">
+                <button id="konfirmasiBayar" class="flex-1 bg-hijau text-white py-2.5 rounded-lg hover:bg-hijau/90">Konfirmasi Pesanan</button>
+                <button onclick="tutupSemuaModal()" class="flex-1 bg-abu-terang py-2.5 rounded-lg hover:bg-abu-terang/80">Batal</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- NOTIFIKASI -->
+    <div id="notif" class="fixed bottom-4 left-1/2 -translate-x-1/2 z-[70] transition-all duration-300 opacity-0 invisible">
+        <div class="bg-abu shadow-xl rounded-lg py-2.5 px-4 border-l-4 border-utama text-sm font-medium text-teks"></div>
+    </div>
+
+    <script>
+        let produkFF = [];
+        let produkML = [];
+        let daftarPesanan = [];
+        let daftarPengguna = [];
+        let penggunaAktif = null;
+        let qrCodeSaatIni = 'https://via.placeholder.com/200';
+        let dataSementara = {};
+
+        // ✅ SIMPAN & MUAT DATA
+        function simpanData() {
+            localStorage.setItem('dataTopup', JSON.stringify({ produkFF, produkML, daftarPesanan, daftarPengguna, qrCodeSaatIni }));
+        }
+
+        function muatData() {
+            const d = localStorage.getItem('dataTopup');
+            if (d) {
+                const data = JSON.parse(d);
+                produkFF = data.produkFF || [];
+                produkML = data.produkML || [];
+                daftarPesanan = data.daftarPesanan || [];
+                daftarPengguna = data.daftarPengguna || [];
+                qrCodeSaatIni = data.qrCodeSaatIni || 'https://via.placeholder.com/200';
+            }
+        }
+
+        // ✅ KELUAR AKUN
+        function keluarAkun() {
+            penggunaAktif = null;
+            document.getElementById('halamanUtama').classList.add('hidden');
+            document.getElementById('halamanLogin').classList.remove('hidden');
+            notif('info', '👋 Berhasil keluar dari akun');
+        }
+
+        // ✅ TAMPILKAN PRODUK
+        function tampilkanProduk() {
+            const f = document.getElementById('daftarFF');
+            const m = document.getElementById('daftarML');
+            const fl = document.getElementById('listProdukFF');
+            const ml = document.getElementById('listProdukML');
+            f.innerHTML = '';
+            m.innerHTML = '';
+            fl.innerHTML = '';
+            ml.innerHTML = '';
+
+            produkFF.forEach((p,i) => {
+                // Tampilan untuk pembeli
+                f.innerHTML += `
+                    <button onclick="prosesMauBayar('FF', '${p.jml} Diamond', ${p.harga})" class="bg-abu border border-abu-terang rounded-xl p-3 hover:border-ff transition-all text-left hover:bg-abu-terang">
+                        <div class="font-medium text-teks text-sm">${p.jml} Diamond</div>
+                        <div class="text-hijau font-semibold text-sm mt-1">Rp ${p.harga.toLocaleString('id-ID')}</div>
+                    </button>
+                `;
+                // Tampilan untuk admin
+                fl.innerHTML += `
+                    <div class="flex justify-between items-center bg-abu-terang/50 p-2.5 rounded-lg shadow-sm mb-1.5">
+                        <span class="font-normal text-sm">${p.jml} Diamond - <span class="text-hijau font-medium">Rp ${p.harga.toLocaleString('id-ID')}</span></span>
+                        <div class="flex gap-2">
+                            <button class="tombol-edit" onclick="bukaEdit('ff', ${i})" title="Ubah Data"><i class="fa fa-pen"></i></button>
+                            <button class="tombol-hapus" onclick="hapusProduk('ff', ${i})" title="Hapus Produk"><i class="fa fa-trash"></i></button>
+                        </div>
+                    </div>
+                `;
+            });
+            
+            produkML.forEach((p,i) => {
+                m.innerHTML += `
+                    <button onclick="prosesMauBayar('ML', '${p.jml} Diamond', ${p.harga})" class="bg-abu border border-abu-terang rounded-xl p-3 hover:border-ml transition-all text-left hover:bg-abu-terang">
+                        <div class="font-medium text-teks text-sm">${p.jml} Diamond</div>
+                        <div class="text-hijau font-semibold text-sm mt-1">Rp ${p.harga.toLocaleString('id-ID')}</div>
+                    </button>
+                `;
+                ml.innerHTML += `
+                    <div class="flex justify-between items-center bg-abu-terang/50 p-2.5 rounded-lg shadow-sm mb-1.5">
+                        <span class="font-normal text-sm">${p.jml} Diamond - <span class="text-hijau font-medium">Rp ${p.harga.toLocaleString('id-ID')}</span></span>
+                        <div class="flex gap-2">
+                            <button class="tombol-edit" onclick="bukaEdit('ml', ${i})" title="Ubah Data"><i class="fa fa-pen"></i></button>
+                            <button class="tombol-hapus" onclick="hapusProduk('ml', ${i})" title="Hapus Produk"><i class="fa fa-trash"></i></button>
+                        </div>
+                    </div>
+                `;
+            });
+        }
+
+        // ✅ EDIT HAPUS PRODUK
+        function bukaEdit(g,i) {
+            document.getElementById('modalEdit').classList.add('buka');
+            document.getElementById('editGame').value = g;
+            document.getElementById('editIndex').value = i;
+            const d = (g === 'ff') ? produkFF[i] : produkML[i];
+            document.getElementById('editJml').value = d.jml;
+            document.getElementById('editHarga').value = d.harga;
+        }
+        
+        document.getElementById('simpanEdit').addEventListener('click', () => {
+            const g = document.getElementById('editGame').value;
+            const i = parseInt(document.getElementById('editIndex').value);
+            const j = parseInt(document.getElementById('editJml').value);
+            const h = parseInt(document.getElementById('editHarga').value);
+            
+            if (!j || !h) return notif('error', '⚠️ Isi data dengan benar!');
+            
+            if (g === 'ff') {
+                produkFF[i].jml = j;
+                produkFF[i].harga = h;
+            } else {
+                produkML[i].jml = j;
+                produkML[i].harga = h;
+            }
+            
+            simpanData();
+            tutupSemuaModal();
+            tampilkanProduk();
+            notif('sukses', '✅ Data produk berhasil diperbarui!');
+        });
+        
+        function hapusProduk(g,i) {
+            if (confirm('Yakin ingin menghapus produk ini? Tindakan tidak dapat dikembalikan.')) {
+                if (g === 'ff') produkFF.splice(i,1);
+                else produkML.splice(i,1);
+                simpanData();
+                tampilkanProduk();
+                notif('sukses', '🗑️ Produk telah dihapus!');
+            }
+        }
+
+        // ✅ ALUR PEMBAYARAN
+        function prosesMauBayar(jenis, jumlah, harga) {
+            let d = {}, k = false;
+            
+            if (jenis === 'FF') 
+            {
+                const n = document.getElementById('namaPembeliFF').value.trim();
+                const ni = document.getElementById('nickFF').value.trim();
+                const i = document.getElementById('idAkunFF').value.trim();
+                if (!n || !ni || !i) k = true;
+                d = { nama:n, nick:ni, id:i, server:'-' };
+            } else {
+                const n = document.getElementById('namaPembeliML').value.trim();
+                const ni = document.getElementById('nickML').value.trim();
+                const ig = document.getElementById('idGameML').value.trim();
+                const is = document.getElementById('idServerML').value.trim();
+                if (!n || !ni || !ig || !is) k = true;
+                d = { nama:n, nick:ni, id:ig, server:is };
+            }
+            
+            if (k) return notif('peringatan', '⚠️ Lengkapi semua data akun terlebih dahulu!');
+            
+            dataSementara = { jenis, jumlah, harga, data:d };
+            document.getElementById('nominalBayar').innerText = `Rp ${harga.toLocaleString('id-ID')}`;
+            document.getElementById('gambarQrBayar').src = qrCodeSaatIni;
+            document.getElementById('modalBayar').classList.add('buka');
+        }
+
+        document.getElementById('konfirmasiBayar').addEventListener('click', () => {
+            const b = document.getElementById('buktiTf');
+            if (b.files.length === 0) return notif('peringatan', '⚠️ Wajib mengunggah bukti transfer!');
+            
+            const r = new FileReader();
+            r.onload = e => {
+                const id = 'ORD-' + Math.random().toString(36).substring(2,10).toUpperCase();
+                daftarPesanan.unshift({
+                    id,
+                    game: (dataSementara.jenis === 'FF') ? 'Free Fire' : 'Mobile Legends',
+                    warna: (dataSementara.jenis === 'FF') ? 'text-ff' : 'text-ml',
+                    nama: dataSementara.data.nama,
+                    username: dataSementara.data.nick,
+                    id_game: dataSementara.data.id,
+                    server: dataSementara.data.server,
+                    produk: dataSementara.jumlah,
+                    harga: dataSementara.harga,
+                    status: 'Sedang Diproses',
+                    bukti: e.target.result
+                });
+                
+                simpanData();
+                updateStatistik();
+                updateTabel();
+                updateRiwayat();
+                tutupSemuaModal();
+                notif('sukses', `🎉 Pesanan berhasil dibuat! ID Pesanan: ${id}`);
+            };
+            r.readAsDataURL(b.files[0]);
+        });
+
+        function klikPerbesar(gambar) {
+            gambar.classList.toggle('besar');
+            setTimeout(() => {
+                const tutup = (e) => {
+                    if (e.target === gambar) {
+                        gambar.classList.remove('besar');
+                        document.removeEventListener('click', tutup);
+                    }
+                };
+                document.addEventListener('click', tutup);
+            }, 100);
+        }
+
+        // ✅ UBAH STATUS OLEH ADMIN
+        function ubahStatusPesanan(id) {
+            const pesanan = daftarPesanan.find(p => p.id === id);
+            if (!pesanan) return;
+
+            if (pesanan.status === 'Sedang Diproses') {
+                pesanan.status = 'Sedang Dikirim';
+                notif('info', '📦 Status diubah: Sedang Dikirim ke Akun');
+            } else if (pesanan.status === 'Sedang Dikirim') {
+                pesanan.status = 'Selesai';
+                notif('sukses', '✅ Status diubah: Pesanan Selesai');
+            } else {
+                notif('peringatan', 'ℹ️ Pesanan sudah selesai diproses');
+            }
+
+            simpanData();
+            updateTabel();
+            updateRiwayat();
+            updateStatistik();
+        }
+
+        // ✅ WARNA BADGE STATUS
+        function getBadgeStatus(status) {
+            if (status === 'Sedang Diproses') return 'badge-proses';
+            if (status === 'Sedang Dikirim') return 'badge-kirim';
+            if (status === 'Selesai') return 'badge-selesai';
+            return '';
+        }
+
+        // ✅ TAMPILKAN TABEL TRANSAKSI ADMIN
+        function updateTabel() {
+            const w = document.getElementById('tabelTransaksi');
+            w.innerHTML = '';
+            
+            if (daftarPesanan.length === 0) {
+                w.innerHTML = '<tr><td colspan="8" class="text-center text-teks-redup p-5">Belum ada pesanan masuk</td></tr>';
+                return;
+            }
+            
+            daftarPesanan.forEach(p => {
+                const b = document.createElement('tr');
+                b.className = 'border-b border-abu-terang/50';
+                b.innerHTML = `
+                    <td class="py-2 px-2"><span class="badge bg-kuning/20 text-kuning">${p.id}</span></td>
+                    <td class="py-2 px-2"><span class="font-medium ${p.warna} text-sm">${p.game}</span></td>
+                    <td class="py-2 px-2 text-xs text-teks-redup leading-relaxed">
+                        <div><span class="text-teks">Nama:</span> ${p.nama}</div>
+                        <div><span class="text-teks">User:</span> ${p.username}</div>
+                        <div><span class="text-teks">ID:</span> ${p.id_game}</div>
+                        ${p.server !== '-' ? `<div><span class="text-teks">Server:</span> ${p.server}</div>` : ''}
+                    </td>
+                    <td class="py-2 px-2 text-sm">${p.produk}</td>
+                    <td class="py-2 px-2"><span class="text-hijau font-medium text-sm">Rp ${p.harga.toLocaleString('id-ID')}</span></td>
+                    <td class="py-2 px-2">
+                        <img src="${p.bukti}" class="img-bukti" onclick="klikPerbesar(this)" title="Klik untuk perbesar">
+                    </td>
+                    <td class="py-2 px-2"><span class="badge ${getBadgeStatus(p.status)}">${p.status}</span></td>
+                    <td class="py-2 px-2"><button class="tombol-pilih tombol-pilih-sm" onclick="ubahStatusPesanan('${p.id}')">Ubah Status</button></td>
+                `;
+                w.appendChild(b);
+            })
+        }
+
+        function updateRiwayat(){
+            const w=document.getElementById('isiRiwayatUser');
+            w.innerHTML='';
+            if(daftarPesanan.length===0){
+                w.innerHTML='<tr><td colspan="5" class="text-center text-teks-redup p-5">Belum ada riwayat pesanan</td></tr>';
+                return
+            }
+            daftarPesanan.forEach(p=>{
+                const b=document.createElement('tr');
+                b.className = 'border-b border-abu-terang/50';
+                b.innerHTML=`<td class="py-2 px-2 text-xs"><span class="text-kuning font-mono">${p.id}</span></td><td class="py-2 px-2 text-sm"><span class="${p.warna} font-medium">${p.game}</span></td><td class="py-2 px-2 text-sm text-teks-redup">${p.nama}</td><td class="py-2 px-2 text-sm">${p.produk}</td><td class="py-2 px-2"><span class="badge ${getBadgeStatus(p.status)}">${p.status}</span></td>`;
+                w.appendChild(b)
+            })
+        }
+
+        // ✅ UPDATE STATISTIK
+        function updateStatistik() {
+            document.getElementById('statTotal').innerText = daftarPesanan.length;
+            document.getElementById('statProses').innerText = daftarPesanan.filter(p => p.status === 'Sedang Diproses').length;
+            document.getElementById('statKirim').innerText = daftarPesanan.filter(p => p.status === 'Sedang Dikirim').length;
+            document.getElementById('statSelesai').innerText = daftarPesanan.filter(p => p.status === 'Selesai').length;
+        }
+
+        // ✅ FITUR: HAPUS AKUN PENGGUNA
+        function hapusAkunPengguna(index) {
+            if (confirm('⚠️ Peringatan!\nYakin ingin menghapus akun pengguna ini? Tindakan ini tidak bisa dibatalkan.')) {
+                daftarPengguna.splice(index, 1);
+                simpanData();
+                updateTabelPengguna();
+                notif('sukses', '✅ Akun pengguna berhasil dihapus!');
+            }
+        }
+
+        // ✅ FITUR RESET: HANYA HAPUS PESANAN, PRODUK & AKUN & QR TETAP
+        document.getElementById('btnResetSemua').addEventListener('click', () => {
+            if (confirm('⚠️ PERINGATAN KOSONGKAN DATA!\n\nHanya Riwayat Pesanan & Statistik yang akan dihapus.\n✅ Produk, Akun Pengguna, dan QR Pembayaran TETAP ADA.\n\nLanjutkan proses?')) {
+                // Reset HANYA daftar pesanan
+                daftarPesanan = [];
+                
+                simpanData();
+                updateStatistik();
+                updateTabel();
+                updateRiwayat();
+                
+                notif('sukses', '🔄 Reset selesai! Riwayat pesanan dikosongkan.');
+            }
+        });
+
+        // ✅ TAMPILKAN TABEL PENGGUNA
+        function updateTabelPengguna() {
+            const w = document.getElementById('tabelPengguna');
+            w.innerHTML = '';
+
+            if (daftarPengguna.length === 0) {
+                w.innerHTML = '<tr><td colspan="6" class="text-center text-teks-redup p-5">Belum ada akun yang mendaftar</td></tr>';
+                return;
+            }
+
+            daftarPengguna.forEach((p, index) => {
+                const b = document.createElement('tr');
+                b.className = 'border-b border-abu-terang/50';
+                b.innerHTML = `
+                    <td class="text-teks-redup py-2.5 px-2 text-sm">${p.nama}</td>
+                    <td class="text-teks-redup py-2.5 px-2 text-sm">${p.email}</td>
+                    <td class="text-teks-redup py-2.5 px-2 text-sm">${p.username}</td>
+                    <td class="text-teks-redup py-2.5 px-2 text-sm">${p.password}</td>
+                    <td class="text-teks-redup py-2.5 px-2 text-sm">${p.tanggal}</td>
+                    <td class="text-center py-2.5 px-2">
+                        <button class="tombol-hapus tombol-pilih-sm" onclick="hapusAkunPengguna(${index})" title="Hapus Akun">
+                            <i class="fa fa-trash"></i> Hapus
+                        </button>
+                    </td>
+                `;
+                w.appendChild(b);
+            });
+        }
+
+        // ✅ MENU SAMPING
+        const tombolMenu = document.getElementById('tombolMenu');
+        const tutupMenu = document.getElementById('tutupMenu');
+        const menuSamping = document.getElementById('menuSamping');
+        const lapisan = document.getElementById('lapisan');
+        
+        tombolMenu.addEventListener('click', () => {
+            menuSamping.classList.add('buka');
+            lapisan.classList.add('tampil');
+        });
+        
+        function tutupMenuSamping() {
+            menuSamping.classList.remove('buka');
+            lapisan.classList.remove('tampil');
+        }
+        
+        tutupMenu.addEventListener('click', tutupMenuSamping);
+        lapisan.addEventListener('click', tutupMenuSamping);
+
+        // ✅ GANTI HALAMAN
+        function gantiHalaman(namaHalaman) {
+            tutupMenuSamping();
+            // Sembunyikan semua konten
+            ['beranda', 'freefire', 'mlbb', 'riwayat', 'carapesan'].forEach(hal => {
+                document.getElementById(`konten${hal.charAt(0).toUpperCase() + hal.slice(1)}`).classList.add('hidden');
+            });
+            // Tampilkan konten yang dipilih
+            document.getElementById(`konten${namaHalaman.charAt(0).toUpperCase() + namaHalaman.slice(1)}`).classList.remove('hidden');
+        }
+
+        // ✅ AKSES ADMIN (Ketik "masukadmin" di kolom ID)
+        const inputIdFF = document.getElementById("idAkunFF");
+        const inputIdML = document.getElementById("idServerML");
+        const kunciRahasia = "masukadmin";
+        
+        function cekKunciMasuk(e) {
+            if ((e.key === 'Enter' || e.keyCode === 13) && this.value.trim().toLowerCase() === kunciRahasia) {
+                this.value = '';
+                document.getElementById('loginAdmin').classList.add('buka');
+            }
+        }
+        
+        inputIdFF.addEventListener("keydown", cekKunciMasuk);
+        inputIdML.addEventListener("keydown", cekKunciMasuk);
+
+        // ✅ LOGIN & KELUAR ADMIN
+        document.getElementById("masukAd").addEventListener("click", () => {
+            const user = document.getElementById("userAd").value.trim();
+            const pass = document.getElementById("passAd").value.trim();
+            
+            if (user === "admin" && pass === "123456") {
+                document.getElementById('loginAdmin').classList.remove('buka');
+                document.getElementById("halamanUtama").classList.add('hidden');
+                document.getElementById("halamanAdmin").classList.remove('hidden');
+                notif('sukses', '👋 Selamat datang kembali, Admin!');
+            } else {
+                notif('error', '❌ Username atau Kata Sandi salah!');
+            }
+        });
+        
+        document.getElementById("keluarAdmin").addEventListener("click", () => {
+            document.getElementById("halamanAdmin").classList.add("hidden");
+            document.getElementById("halamanUtama").classList.remove("hidden");
+            notif('info', '🔓 Berhasil keluar dari mode Admin');
+        });
+
+        // ✅ SISTEM LOGIN & DAFTAR PENGGUNA
+        document.querySelectorAll('#halamanLogin .tab-btn').forEach(tombol => {
+            tombol.addEventListener('click', () => {
+                // Ubah status tombol
+                document.querySelectorAll('#halamanLogin .tab-btn').forEach(btn => btn.classList.remove('aktif'));
+                document.querySelectorAll('#halamanLogin .tab-konten').forEach(konten => konten.classList.remove('aktif'));
+                tombol.classList.add('aktif');
+                // Tampilkan konten
+                document.getElementById(`tab-${tombol.dataset.target}`).classList.add('aktif');
+            });
+        });
+
+        // Proses Daftar Akun Baru
+        document.getElementById('btnDaftar').addEventListener('click', () => {
+            const nama = document.getElementById('regNama').value.trim();
+            const email = document.getElementById('regEmail').value.trim();
+            const user = document.getElementById('regUser').value.trim();
+            const pass = document.getElementById('regPass').value.trim();
+
+            if (!nama || !email || !user || !pass) {
+                return notif('error', '❌ Lengkapi semua kolom isian!');
+            }
+            
+            // Cek username sudah ada atau belum
+            if (daftarPengguna.some(pengguna => pengguna.username === user)) {
+                return notif('error', '❌ Username sudah digunakan, coba nama lain!');
+            }
+
+            // Simpan data pengguna baru
+            daftarPengguna.unshift({
+                nama: nama,
+                email: email,
+                username: user,
+                password: pass,
+                tanggal: new Date().toLocaleString('id-ID')
+            });
+
+            simpanData();
+            updateTabelPengguna(); // Langsung tampilkan di tabel admin
+            notif('sukses', '✅ Akun berhasil dibuat! Silakan login.');
+            
+            // Kosongkan form
+            document.getElementById('regNama').value = '';
+            document.getElementById('regEmail').value = '';
+            document.getElementById('regUser').value = '';
+            document.getElementById('regPass').value = '';
+            
+            // Pindah ke tab masuk
+            document.querySelector('#halamanLogin .tab-btn[data-target="masuk"]').click();
+        });
+
+        // Proses Login Pengguna
+        document.getElementById('btnMasuk').addEventListener('click', () => {
+            const user = document.getElementById('loginUser').value.trim();
+            const pass = document.getElementById('loginPass').value.trim();
+
+            // Cek apakah Admin
+            if (user === 'admin' && pass === '123456') {
+                document.getElementById('halamanLogin').classList.add('hidden');
+                document.getElementById('halamanAdmin').classList.remove('hidden');
+                notif('sukses', '👋 Selamat datang, Admin!');
+                return;
+            }
+
+            // Cek apakah Pengguna Terdaftar
+            const cariPengguna = daftarPengguna.find(pengguna => pengguna.username === user && pengguna.password === pass);
+            if (cariPengguna) {
+                penggunaAktif = cariPengguna;
+                document.getElementById('halamanLogin').classList.add('hidden');
+                document.getElementById('halamanUtama').classList.remove('hidden');
+                notif('sukses', `👋 Selamat datang, ${cariPengguna.nama}!`);
+            } else {
+                notif('error', '❌ Username atau Kata Sandi salah / belum terdaftar!');
+            }
+        });
+
+        // ✅ FUNGSI TAB UMUM
+        document.querySelectorAll('.tab-btn').forEach(tombol => {
+            tombol.addEventListener('click', () => {
+                document.querySelectorAll('.tab-btn').forEach(btn => btn.classList.remove('aktif'));
+                document.querySelectorAll('.tab-konten').forEach(konten => konten.classList.remove('aktif'));
+                tombol.classList.add('aktif');
+                document.getElementById(`tab-${tombol.dataset.target}`).classList.add('aktif');
+            });
+        });
+
+        // ✅ TAMBAH PRODUK BARU
+        document.getElementById('simpanProduk').addEventListener('click', () => {
+            const jenisGame = document.getElementById('tambahGame').value;
+            const jumlahDM = parseInt(document.getElementById('jmlDmBaru').value);
+            const hargaDM = parseInt(document.getElementById('hargaDmBaru').value);
+            
+            if (!jumlahDM || !hargaDM) {
+                return notif('peringatan', '⚠️ Isi jumlah dan harga dengan angka yang benar!');
+            }
+            
+            if (jenisGame === 'ff') {
+                produkFF.push({ id: Date.now(), jml: jumlahDM, nama: "Diamond", harga: hargaDM });
+            } else {
+                produkML.push({ id: Date.now(), jml: jumlahDM, nama: "Diamond", harga: hargaDM });
+            }
+            
+            simpanData();
+            // Kosongkan input
+            document.getElementById('jmlDmBaru').value = '';
+            document.getElementById('hargaDmBaru').value = '';
+            tampilkanProduk();
+            notif('sukses', '✅ Produk baru berhasil ditambahkan!');
+        });
+
+        // ✅ UBAH QR PEMBAYARAN
+        document.getElementById('uploadQrAdmin').addEventListener('change', e => {
+            const file = e.target.files[0];
+            if (file) {
+                const bacaFile = new FileReader();
+                bacaFile.onload = evt => {
+                    document.getElementById('previewQrAdmin').src = evt.target.result;
+                };
+                bacaFile.readAsDataURL(file);
+            }
+        });
+        
+        document.getElementById('simpanQrAdmin').addEventListener('click', () => {
+            qrCodeSaatIni = document.getElementById('previewQrAdmin').src;
+            simpanData();
+            notif('sukses', '✅ Kode QR pembayaran berhasil diperbarui!');
+        });
+
+        // ✅ TUTUP SEMUA MODAL
+        function tutupSemuaModal() {
+            document.querySelectorAll('.modal').forEach(modal => modal.classList.remove('buka'));
+        }
+        
+        document.getElementById('batalEdit').addEventListener('click', tutupSemuaModal);
+
+        // ✅ SISTEM NOTIFIKASI
+        function notif(jenis, teks) {
+            const elemenNotif = document.getElementById('notif');
+            const kotakNotif = elemenNotif.querySelector('div');
+            
+            // Reset kelas
+            kotakNotif.className = 'bg-abu shadow-xl rounded-lg py-2.5 px-4 border-l-4 border-utama text-sm font-medium text-teks';
+            
+            // Sesuaikan warna sesuai jenis
+            if (jenis === 'sukses') kotakNotif.classList.add('border-hijau', 'text-hijau');
+            if (jenis === 'error') kotakNotif.classList.add('border-merah', 'text-merah');
+            if (jenis === 'peringatan') kotakNotif.classList.add('border-kuning', 'text-kuning');
+            if (jenis === 'info') kotakNotif.classList.add('border-utama', 'text-utama');
+            
+            // Tampilkan notifikasi
+            kotakNotif.innerText = teks;
+            elemenNotif.classList.remove('opacity-0', 'invisible');
+            elemenNotif.classList.add('opacity-100', 'visible');
+            
+            // Sembunyikan otomatis setelah 3 detik
+            clearTimeout(window.waktuNotif);
+            window.waktuNotif = setTimeout(() => {
+                elemenNotif.classList.add('opacity-0', 'invisible');
+                elemenNotif.classList.remove('opacity-100', 'visible');
+            }, 3000);
+        }
+
+        // ✅ MULAI PROGRAM
+        muatData();
+        tampilkanProduk();
+        updateStatistik();
+        updateTabel();
+        updateRiwayat();
+        updateTabelPengguna();
+    </script>
+</body>
+</html>
